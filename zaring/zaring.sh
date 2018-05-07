@@ -124,6 +124,9 @@ get_service() {
 	if [[ -n ${pid} ]]; then
 	    res=`sudo ps -p ${pid} -o etimes -h 2>/dev/null | awk '{$1=$1};1'`
 	fi
+    elif [[ ${property} == 'cksum' ]]; then
+	exec=`jq -r '.exec' ${json} 2>/dev/null`
+	res=`cksum ${exec} | awk '{print $1}'`
     elif [[ ${property} == 'version' ]]; then
        	res=`jq -r '.version' ${json} 2>/dev/null`
     elif [[ ${property} == 'status' ]]; then
