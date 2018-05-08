@@ -124,12 +124,14 @@ get_service() {
 	if [[ -n ${pid} ]]; then
 	    res=`sudo ps -p ${pid} -o etimes -h 2>/dev/null | awk '{$1=$1};1'`
 	fi
-    elif [[ ${property} =~ (cksum|size) ]]; then
+    elif [[ ${property} =~ (cksum|modify|size) ]]; then
 	exec=`jq -r '.exec' ${json} 2>/dev/null`
 	if [[ ${property} == 'cksum' ]]; then
 	    res=`cksum ${exec} | awk '{print $1}'`
+	elif [[ ${property} == 'modify' ]]; then
+	    res=`stat -L -c "%Y" ${exec} 2>/dev/null`
 	else
-	    res=`cksum ${exec} | awk '{print $2}'`
+	    res=`stat -L -c "%s" ${exec} 2>/dev/null`
 	fi
     elif [[ ${property} == 'version' ]]; then
        	res=`jq -r '.version' ${json} 2>/dev/null`
