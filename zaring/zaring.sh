@@ -127,7 +127,7 @@ get_service() {
     elif [[ ${property} =~ (cksum|modify|size) ]]; then
 	exec=`jq -r '.exec' ${json} 2>/dev/null`
 	if [[ ${property} == 'cksum' ]]; then
-	    res=`cksum ${exec} | awk '{print $1}'`
+	    res=`cksum ${exec} 2>/dev/null | awk '{print $1}'`
 	elif [[ ${property} == 'modify' ]]; then
 	    res=`stat -L -c "%Y" ${exec} 2>/dev/null`
 	else
