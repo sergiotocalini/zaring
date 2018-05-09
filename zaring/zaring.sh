@@ -105,19 +105,23 @@ get_service() {
     json=$(get_configfile ${resource})
     if [[ ${property} == 'listen' ]]; then
         app_port=(`jq -r '.monitoring.port|@sh' ${json} 2>/dev/null`)
-        for index in ${!app_port[*]}; do
-           pid=`sudo lsof -Pi :${app_port[${index}]} -sTCP:LISTEN -t 2>/dev/null`
-           rcode="${?}"
-           if [[ ${rcode} == 0 ]]; then
-              res=1
-           else
-              if [[ ${res} != 0 ]]; then 
-                 res=2
-                 continue
-              fi
-              res=0
-           fi
-        done
+	if [ ${#app_port[@]} -gt 0 ]; then
+            for index in ${!app_port[*]}; do
+		pid=`sudo lsof -Pi :${app_port[${index}]} -sTCP:LISTEN -t 2>/dev/null`
+		rcode="${?}"
+		if [[ ${rcode} == 0 ]]; then
+		    res=1
+		else
+		    if [[ ${res} != 0 ]]; then 
+			res=2
+			continue
+		    fi
+		    res=0
+		fi
+            done
+	else
+	    res=1
+	fi
     elif [[ ${property} == 'uptime' ]]; then
         app_exec=`jq -r '.exec' ${json} 2>/dev/null`
         pid=`sudo jps -l 2>/dev/null | grep "${app_exec}" | awk '{print $1}'`
