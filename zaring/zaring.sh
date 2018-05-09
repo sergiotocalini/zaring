@@ -53,6 +53,11 @@ version() {
     exit 1
 }
 
+zabbix_not_support() {
+    echo "ZBX_NOTSUPPORTED"
+    exit 1
+}
+
 refresh_cache() {
     [[ -d ${CACHE_DIR} ]] || mkdir -p ${CACHE_DIR}
     file=${CACHE_DIR}/data.json
@@ -103,6 +108,8 @@ get_service() {
     property=${2:-listen}
 
     json=$(get_configfile ${resource})
+    [ ${json} -eq 0 ] && zabbix_not_support
+    
     if [[ ${property} == 'listen' ]]; then
         app_port=(`jq -r '.monitoring.port|@sh' ${json} 2>/dev/null`)
 	if [ ${#app_port[@]} -gt 0 ]; then
