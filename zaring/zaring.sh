@@ -108,7 +108,7 @@ get_service() {
     property=${2:-listen}
 
     json=$(get_configfile ${resource})
-    [ ${json} -eq "0" ] && zabbix_not_support
+    [ ${json} == 0 ] && zabbix_not_support
     
     if [[ ${property} == 'listen' ]]; then
         app_port=(`jq -r '.monitoring.port|@sh' ${json} 2>/dev/null`)
