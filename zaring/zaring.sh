@@ -83,21 +83,23 @@ discovery() {
 get_configfile() {
     resource=${1:-all}
 
-    JSON_DIR="/etc/spring-boot/conf.d"
+    # JSON_DIR="/etc/spring-boot/conf.d"
     if [[ ${resource} != 'all' ]]; then
-       for configfile in ${JSON_DIR}/*.json; do
-          name=`jq -r 'select(.name=="'${resource}'")|.name' ${configfile} 2>/dev/null`
-          if [[ ${name} == ${resource} ]]; then
-             res=${configfile}
-             break
-          fi
-       done
+	res=`sudo /etc/init.d/spring-boot list units`
+	# for configfile in ${JSON_DIR}/*.json; do
+        #     name=`jq -r 'select(.name=="'${resource}'")|.name' ${configfile} 2>/dev/null`
+        #     if [[ ${name} == ${resource} ]]; then
+	# 	res=${configfile}
+	# 	break
+        #     fi
+	# done
     else
-       count=0
-       for configfile in ${JSON_DIR}/*.json; do
-          res[${count}]=${configfile}
-          let "count=count+1"
-       done
+	res=`sudo /etc/init.d/spring-boot list units ${resource}`
+	# count=0
+	# for configfile in ${JSON_DIR}/*.json; do
+        #     res[${count}]=${configfile}
+        #     let "count=count+1"
+	# done
     fi
     echo "${res[@]:-0}"
     return 0
