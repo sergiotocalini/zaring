@@ -85,7 +85,7 @@ get_configfile() {
 
     # JSON_DIR="/etc/spring-boot/conf.d"
     if [[ ${resource} != 'all' ]]; then
-	res=`sudo /etc/init.d/spring-boot list units`
+	res=`sudo /etc/init.d/spring-boot list units ${resource}`
 	# for configfile in ${JSON_DIR}/*.json; do
         #     name=`jq -r 'select(.name=="'${resource}'")|.name' ${configfile} 2>/dev/null`
         #     if [[ ${name} == ${resource} ]]; then
@@ -94,7 +94,7 @@ get_configfile() {
         #     fi
 	# done
     else
-	res=`sudo /etc/init.d/spring-boot list units ${resource}`
+	res=`sudo /etc/init.d/spring-boot list units`
 	# count=0
 	# for configfile in ${JSON_DIR}/*.json; do
         #     res[${count}]=${configfile}
