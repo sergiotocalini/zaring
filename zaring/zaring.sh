@@ -13,6 +13,7 @@ APP_NAME=$(basename $0)
 APP_DIR=$(dirname $0)
 APP_VER="0.0.1"
 APP_WEB="http://www.sergiotocalini.com.ar/"
+INIT_SCRIPT="/etc/init.d/springboot"
 TIMESTAMP=`date '+%s'`
 CACHE_DIR=${APP_DIR}/tmp
 CACHE_TTL=5                                      # IN MINUTES
@@ -82,24 +83,10 @@ discovery() {
 
 get_configfile() {
     resource=${1:-all}
-
-    # JSON_DIR="/etc/spring-boot/conf.d"
     if [[ ${resource} != 'all' ]]; then
-	res=`sudo /etc/init.d/spring-boot list units ${resource}`
-	# for configfile in ${JSON_DIR}/*.json; do
-        #     name=`jq -r 'select(.name=="'${resource}'")|.name' ${configfile} 2>/dev/null`
-        #     if [[ ${name} == ${resource} ]]; then
-	# 	res=${configfile}
-	# 	break
-        #     fi
-	# done
+	res=`sudo ${INIT_SCRIPT} list units ${resource}`
     else
-	res=`sudo /etc/init.d/spring-boot list units`
-	# count=0
-	# for configfile in ${JSON_DIR}/*.json; do
-        #     res[${count}]=${configfile}
-        #     let "count=count+1"
-	# done
+	res=`sudo ${INIT_SCRIPT} list units`
     fi
     echo "${res[@]:-0}"
     return 0
