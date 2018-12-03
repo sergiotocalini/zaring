@@ -1,2 +1,2 @@
 # zaring
-Zabbix Agent - Java Spring-boot
+Zabbix Agent - Java Springboot
