@@ -8,17 +8,19 @@ Zabbix Agent - Java Springboot
 ## Packages
 * ksh
 * sudo
+* jq
+* curl
 
 __**Debian/Ubuntu**__
 
 ```
-#~ sudo apt install ksh sudo
+#~ sudo apt install ksh sudo jq curl
 #~
 ```
 
 __**Red Hat**__
 ```
-#~ sudo yum install ksh sudo
+#~ sudo yum install ksh sudo jq curl
 #~
 ```
 
