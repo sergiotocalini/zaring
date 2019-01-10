@@ -74,7 +74,8 @@ discovery() {
     json=$(refresh_cache)
     if [[ ${resource} == 'projects' ]]; then
 	for configfile in $(get_configfile); do
-	    jq -r "select(.monitoring.enable==\"yes\")|\"\(.id)|\(.name)|\(.desc)|\(.monitoring.jmx)|\(.version)|\(.monitoring.tags|join(\":\"))|\"" \
+	    tags=`jq -r ".monitoring.tags[]" ${configfile} 2>/dev/null | sed 's/null//g' | xargs printf '%s:'`
+	    jq -r "select(.monitoring.enable==\"yes\")|\"\(.id)|\(.name)|\(.desc)|\(.monitoring.jmx)|\(.version)|${tags%?}|\"" \
 	       ${configfile} 2>/dev/null
 	done
     fi
