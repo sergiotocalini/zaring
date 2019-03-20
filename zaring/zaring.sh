@@ -121,7 +121,8 @@ get_service() {
 	fi
     elif [[ ${property} == 'uptime' ]]; then
         app_exec=`jq -r '.exec' ${json} 2>/dev/null`
-        pid=`ps -ef 2>/dev/null | grep "${app_exec}" | grep -v "grep" | awk '{print $2}'`
+        pid=`ps -ef 2>/dev/null | grep "${app_exec}" | \
+	     grep -v "grep" | awk '{print $2}' | head -1`
 	if [[ -n ${pid} ]]; then
 	    res=`sudo ps -p ${pid} -o etimes -h 2>/dev/null | awk '{$1=$1};1'`
 	fi
@@ -152,7 +153,8 @@ get_service() {
             fi
         else
             app_exec=`jq -r '.exec' ${json} 2>/dev/null`
-	    pid=`ps -ef 2>/dev/null | grep "${app_exec}" | grep -v "grep" | awk '{print $2}'`
+	    pid=`ps -ef 2>/dev/null | grep "${app_exec}" | \
+	    	 grep -v "grep" | awk '{print $2}' | head -1`
 	    if [[ -n ${pid} ]]; then
 		res=1           
             fi
