@@ -121,7 +121,7 @@ get_service() {
 	fi
     elif [[ ${property} == 'uptime' ]]; then
         app_exec=`jq -r '.exec' ${json} 2>/dev/null`
-        pid=`sudo jps -l 2>/dev/null | grep "${app_exec}" | awk '{print $1}'`
+        pid=`ps -ef 2>/dev/null | grep "${app_exec}" | grep -v "grep" | awk '{print $2}'`
 	if [[ -n ${pid} ]]; then
 	    res=`sudo ps -p ${pid} -o etimes -h 2>/dev/null | awk '{$1=$1};1'`
 	fi
@@ -139,23 +139,23 @@ get_service() {
     elif [[ ${property} == 'status' ]]; then
         url=`jq -r '.monitoring.ws.url' ${json} 2>/dev/null`
         if [[ -n ${url/null/} ]]; then
-	   rval=`curl --insecure -s ${url} -o /dev/null -w "%{http_code}\n" 2>/dev/null`
-           rcode="${?}"
-           if [[ ${rcode} == 0 ]]; then
-	      valid_codes=`jq -r '.monitoring.ws.codes|@sh' ${json} 2>/dev/null`
-              for code in ${valid_codes[@]:-200}; do
-                 if [[ ${code} == ${rval} ]]; then
-                    res=1
-                    break
-                 fi
-              done
-           fi
+	    rval=`curl --insecure -s ${url} -o /dev/null -w "%{http_code}\n" 2>/dev/null`
+            rcode="${?}"
+            if [[ ${rcode} == 0 ]]; then
+		valid_codes=`jq -r '.monitoring.ws.codes|@sh' ${json} 2>/dev/null`
+		for code in ${valid_codes[@]:-200}; do
+                    if [[ ${code} == ${rval} ]]; then
+			res=1
+			break
+                    fi
+		done
+            fi
         else
-           app_exec=`jq -r '.exec' ${json} 2>/dev/null`
-           pid=`sudo jps -l 2>/dev/null | grep "${app_exec}" | awk '{print $1}'`
-	   if [[ -n ${pid} ]]; then
-              res=1           
-           fi
+            app_exec=`jq -r '.exec' ${json} 2>/dev/null`
+	    pid=`ps -ef 2>/dev/null | grep "${app_exec}" | grep -v "grep" | awk '{print $2}'`
+	    if [[ -n ${pid} ]]; then
+		res=1           
+            fi
         fi
     fi
     echo "${res:-0}"
@@ -184,7 +184,7 @@ while getopts "s::a:s:uphvj:" OPTION; do
 	v)
 	    version
 	    ;;
-         \?)
+        \?)
             exit 1
             ;;
     esac
